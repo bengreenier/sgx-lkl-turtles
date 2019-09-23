@@ -1,0 +1,1 @@
+console.log("Hello world. I'm inside an enclave!")
