@@ -20,5 +20,5 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         snapshot: true
-        cache: true
+        cache: false
         registry: docker.pkg.github.com
