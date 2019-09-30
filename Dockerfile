@@ -19,44 +19,47 @@ RUN add-apt-repository \
 RUN apt-get update && apt-get install -y docker-ce-cli
 # Create tools directories
 RUN mkdir -p /tools/src && mkdir -p /tools/bin
-
-# Enforce that the entrypoint be bash (and default to running "docker version")
-ENTRYPOINT [ "/bin/bash" ]
-CMD ["-c", "docker version"]
-
-FROM core as with-lkl
 WORKDIR /tools/src
-RUN git clone --recursive https://github.com/lsds/sgx-lkl.git
-WORKDIR /tools/src/sgx-lkl
+# Setup our build vars
+ARG MAKE_ENV="DEBUG=true"
+ARG MAKE_TARGET="sim"
+ENV CORE_MAKE_ENV=${MAKE_ENV}
+ENV CORE_MAKE_TARGET=${MAKE_TARGET}
+
+# an intermediate, where we build lkl and copy the tools over
+FROM core as with-lkl
 RUN sudo apt-get install -y \
   make gcc g++ bc python xutils-dev bison flex libgcrypt20-dev libjson-c-dev \
   automake autopoint autoconf pkgconf libtool libcurl4-openssl-dev \
   libprotobuf-dev libprotobuf-c-dev protobuf-compiler protobuf-c-compiler \
   libssl-dev wget rsync
-ARG MAKE_TARGET="sim DEBUG=true"
-RUN make ${MAKE_TARGET}
-RUN cp build/sgx-lkl-run /tools/bin \
-  && cp build/libsgxlkl.so /tools/bin \
-  && cp tools/sgx-lkl-disk /tools/bin
-
-WORKDIR /
-ENTRYPOINT [ "/bin/bash" ]
+# clone our source, and build it
+RUN git clone --recursive https://github.com/lsds/sgx-lkl.git
+WORKDIR /tools/src/sgx-lkl
+RUN make $CORE_MAKE_TARGET $CORE_MAKE_ENV
+RUN make install PREFIX="/tools" \
+  && cp /tools/src/sgx-lkl/tools/gen_enclave_key.sh /tools/bin \
+  && cp /tools/src/sgx-lkl/build/libsgxlkl.so /tools/bin
 
 # must be run with: --privileged -v //var/run/docker.sock:/var/run/docker.sock -it <image_name>
 FROM core as app-platform
 RUN apt-get update && apt-get install -y \
-    bc libjson-c-dev libprotobuf-c-dev
+    bc libjson-c-dev libprotobuf-c-dev openssl dos2unix
+
 RUN mkdir -p /app/src
 WORKDIR /app/src
 COPY --from=with-lkl /tools/bin/ /tools/bin/
 # TODO(bengreenier): Do this with volume mount
 COPY ./src ./
+
 WORKDIR /app
-# TODO(bengreenier): Figure out a good path to cd /app && npm start
-#
-# we have to disk-create at runtime, as we can't have docker at build time
-RUN echo "/tools/bin/sgx-lkl-disk create --size=100M --docker=./src/Dockerfile ./app.img && \
-  SGXLKL_VERBOSE=1 SGXLKL_HEAP=640M /tools/bin/sgx-lkl-run ./app.img /usr/bin/node --max-old-space-size=512 /app/index.js" > start.sh 
-RUN chmod +x start.sh
-ENTRYPOINT [ "/bin/bash", "-c" ]
-CMD [ "/app/start.sh" ]
+COPY ./entrypoint.sh ./
+RUN dos2unix ./entrypoint.sh && chmod +x ./entrypoint.sh
+
+ENTRYPOINT ./entrypoint.sh \
+  "$CORE_MAKE_TARGET" \
+  ./app.key \
+  /tools/bin/libsgxlkl.so \
+  ./src/Dockerfile \
+  ./app.img \
+  /app/index.js
