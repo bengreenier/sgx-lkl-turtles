@@ -16,7 +16,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: docker.pkg.github.com/bengreenier/sgx-lkl-turtles/sgx-lkl-turtles
+        name: docker.pkg.github.com/bengreenier/sgx-lkl-turtles/sgx-lkl-turtles:latest
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         snapshot: true
