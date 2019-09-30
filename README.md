@@ -21,7 +21,7 @@ To run the sample on your own, just grab and run the runtime docker container fr
 # Runs it in privileged mode
 # Forwards the docker daemon control socket
 
-docker run -it --rm --privileged -v //var/run/docker.sock:/var/run/docker.sock docker.pkg.github.com/bengreenier/sgx-lkl-turtles/sgx-lkl-turtles:latest
+docker run -it --rm --privileged -v //var/run/docker.sock:/var/run/docker.sock bengreenier/sgx-lkl-turtles:latest-sim
 ```
 
 You should see:
