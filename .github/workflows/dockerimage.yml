@@ -8,14 +8,29 @@ on:
 jobs:
 
   build:
- 
+    strategy:
+      matrix:
+        make_target: ["", "sim DEBUG=true"]
+        registry: ["docker.pkg.github.com", "hub.docker.com"]
+        include:
+          - make_target: ""
+            image_tag: "latest-hw"
+          - make_target: "sim DEBUG=true"
+            image_tag: "latest-sim"
+          - registry: "docker.pkg.github.com"
+            username: "${{ secrets.DOCKER_GH_USERNAME }}"
+            password: "${{ secrets.DOCKER_GH_PASSWORD }}"
+            registry_qualifier: "bengreenier/sgx-lkl-turtles/sgx-lkl-turtles"
+          - registry: "hub.docker.com"
+            username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+            password: "${{ secrets.DOCKER_HUB_PASSWORD }}"
+            registry_qualifier: "bengreenier/sgx-lkl-turtles"
     runs-on: ubuntu-latest
- 
     steps:
     - uses: actions/checkout@v1
     - name: Docker Login
-      run: docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}" docker.pkg.github.com
+      run: docker login -u "${{ matrix.username }}" -p "${{ matrix.password }}" "${{ matrix.registry }}"
     - name: Docker Build
-      run: docker build -t docker.pkg.github.com/bengreenier/sgx-lkl-turtles/sgx-lkl-turtles:latest .
-    - name: Docker Push
-      run: docker push docker.pkg.github.com/bengreenier/sgx-lkl-turtles/sgx-lkl-turtles:latest
+      run: docker build --build-arg MAKE_TARGET="${{ matrix.make_target }}" -t "${{ matrix.registry }}/${{ matrix.registry_qualifier }}/${{ matrix.image_tag }}" .
+    - name: Docker Push (Github)
+      run: docker push "${{ matrix.registry }}/${{ matrix.registry_qualifier }}/${{ matrix.image_tag }}"
