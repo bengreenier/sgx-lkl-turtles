@@ -33,7 +33,8 @@ RUN sudo apt-get install -y \
   automake autopoint autoconf pkgconf libtool libcurl4-openssl-dev \
   libprotobuf-dev libprotobuf-c-dev protobuf-compiler protobuf-c-compiler \
   libssl-dev wget rsync
-RUN make sim DEBUG=true
+ARG MAKE_TARGET="sim DEBUG=true"
+RUN make ${MAKE_TARGET}
 RUN cp build/sgx-lkl-run /tools/bin \
   && cp build/libsgxlkl.so /tools/bin \
   && cp tools/sgx-lkl-disk /tools/bin
@@ -42,9 +43,12 @@ WORKDIR /
 ENTRYPOINT [ "/bin/bash" ]
 
 # must be run with: --privileged -v //var/run/docker.sock:/var/run/docker.sock -it <image_name>
-FROM with-lkl as app-platform
+FROM core as app-platform
+RUN apt-get update && apt-get install -y \
+    bc libjson-c-dev libprotobuf-c-dev
 RUN mkdir -p /app/src
 WORKDIR /app/src
+COPY --from=with-lkl /tools/bin/ /tools/bin/
 # TODO(bengreenier): Do this with volume mount
 COPY ./src ./
 WORKDIR /app
