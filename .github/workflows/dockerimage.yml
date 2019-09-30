@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Docker Login
-      run: docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+      run: docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}" docker.pkg.github.com
     - name: Docker Build
       run: docker build -t docker.pkg.github.com/bengreenier/sgx-lkl-turtles/sgx-lkl-turtles:latest .
     - name: Docker Push
