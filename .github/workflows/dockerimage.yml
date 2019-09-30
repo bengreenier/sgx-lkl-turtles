@@ -21,4 +21,5 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         snapshot: true
         cache: false
+        pull_requests: true
         registry: docker.pkg.github.com
