@@ -50,10 +50,13 @@ fi
 
 # Configure our LKL environment
 export SGXLKL_VERBOSE=1
-export SGXLKL_HEAP=640M
+# 640M
+export SGXLKL_HEAP=8000M
 export SGXLKL_KEY=$SIGN_KEY_PATH
 
 # Run lkl
 echo "Entrypoint: Running..."
-/tools/bin/sgx-lkl-run $DOCKER_IMG_PATH /usr/bin/node --max-old-space-size=512 $DOCKER_ENTRY_PATH
+echo "SGXLKL_HEAP ${SGXLKL_HEAP}"
+# /usr/bin/node  --max-old-space-size=512 
+/tools/bin/sgx-lkl-run $DOCKER_IMG_PATH /usr/bin/dotnet $DOCKER_ENTRY_PATH
 echo "Entrypoint: Ran."

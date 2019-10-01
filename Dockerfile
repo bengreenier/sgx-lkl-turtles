@@ -50,7 +50,8 @@ RUN mkdir -p /app/src
 WORKDIR /app/src
 COPY --from=with-lkl /tools/bin/ /tools/bin/
 # TODO(bengreenier): Do this with volume mount
-COPY ./src ./
+#COPY ./src ./
+COPY ./src/dotnet ./
 
 WORKDIR /app
 COPY ./entrypoint.sh ./
@@ -62,4 +63,4 @@ ENTRYPOINT ./entrypoint.sh \
   /tools/bin/libsgxlkl.so \
   ./src/Dockerfile \
   ./app.img \
-  /app/index.js
+  /app/HelloWorld.dll
