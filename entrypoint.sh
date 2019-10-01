@@ -48,8 +48,15 @@ fi
 # Create our actual disk (that we'll mount in the enclave)
 /tools/bin/sgx-lkl-disk create --size=100M --docker=$DOCKER_PATH $DOCKER_IMG_PATH
 
+# Configure our network stack (note: EVERYTHING MUST BE 8080)
+ip tuntap add dev sgxlkl_tap0 mode tap user `whoami`
+ip link set dev sgxlkl_tap0 up
+ip addr add dev sgxlkl_tap0 10.0.1.254/24
+iptables -t nat -I PREROUTING -p tcp -d `hostname -i` --dport 8080 -j DNAT --to-destination 10.0.1.1:8080
+
 # Configure our LKL environment
 export SGXLKL_VERBOSE=1
+export SGXLKL_TAP=sgxlkl_tap0
 export SGXLKL_HEAP=640M
 export SGXLKL_KEY=$SIGN_KEY_PATH
 

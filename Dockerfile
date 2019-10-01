@@ -44,7 +44,9 @@ RUN make install PREFIX="/tools" \
 # must be run with: --privileged -v //var/run/docker.sock:/var/run/docker.sock -it <image_name>
 FROM core as app-platform
 RUN apt-get update && apt-get install -y \
-    bc libjson-c-dev libprotobuf-c-dev openssl dos2unix
+    iptables iproute2 \
+    bc libjson-c-dev libprotobuf-c-dev openssl \
+    dos2unix
 
 RUN mkdir -p /app/src
 WORKDIR /app/src
