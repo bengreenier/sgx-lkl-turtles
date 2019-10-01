@@ -62,4 +62,4 @@ ENTRYPOINT ./entrypoint.sh \
   /tools/bin/libsgxlkl.so \
   ./src/Dockerfile \
   ./app.img \
-  /app/index.js
+  /app/hello.py

@@ -55,5 +55,5 @@ export SGXLKL_KEY=$SIGN_KEY_PATH
 
 # Run lkl
 echo "Entrypoint: Running..."
-/tools/bin/sgx-lkl-run $DOCKER_IMG_PATH /usr/bin/node --max-old-space-size=512 $DOCKER_ENTRY_PATH
+/tools/bin/sgx-lkl-run $DOCKER_IMG_PATH /usr/bin/python ./app/hello.py --max-old-space-size=512 $DOCKER_ENTRY_PATH
 echo "Entrypoint: Ran."
