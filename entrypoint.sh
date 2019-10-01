@@ -46,17 +46,23 @@ if [ "$MAKE_TARGET" != "sim" ]; then
 fi
 
 # Create our actual disk (that we'll mount in the enclave)
-/tools/bin/sgx-lkl-disk create --size=100M --docker=$DOCKER_PATH $DOCKER_IMG_PATH
+/tools/bin/sgx-lkl-disk create --size=2048M --docker=$DOCKER_PATH $DOCKER_IMG_PATH
 
 # Configure our LKL environment
 export SGXLKL_VERBOSE=1
 # 640M
-export SGXLKL_HEAP=8000M
+export SGXLKL_HEAP=2048M
 export SGXLKL_KEY=$SIGN_KEY_PATH
+
+# SGX Config
+# export SGXLKL_MMAP_FILES="Public"
+# export SGXLKL_STHREADS=4
+# export SGXLKL_ETHREADS=4
+# export SGXLKL_GETTIME_VDSO=0
 
 # Run lkl
 echo "Entrypoint: Running..."
 echo "SGXLKL_HEAP ${SGXLKL_HEAP}"
-# /usr/bin/node  --max-old-space-size=512 
-/tools/bin/sgx-lkl-run $DOCKER_IMG_PATH /usr/bin/dotnet $DOCKER_ENTRY_PATH
+# /usr/bin/node --max-old-space-size=512 
+env ${SGX_LKL_OPTIONS} /tools/bin/sgx-lkl-run $DOCKER_IMG_PATH /usr/bin/dotnet $DOCKER_ENTRY_PATH
 echo "Entrypoint: Ran."
