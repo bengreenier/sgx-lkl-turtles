@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "tslint": "tslint -c tslint.json '**/*.ts'"
   },
   "author": "Ben Greenier",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "^12.7.9",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
+  }
 }
