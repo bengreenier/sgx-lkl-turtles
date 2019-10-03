@@ -1,2 +1,4 @@
 Dockerfile
 .gitignore
+build
+node_modules/

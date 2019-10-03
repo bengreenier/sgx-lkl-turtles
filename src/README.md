@@ -1,17 +1,34 @@
 # src
 
-A hello world [Node](https://nodejs.org) app, designed to run inside an [alpine](https://hub.docker.com/_/alpine) container.
+A hello world [Node](https://nodejs.org) app using [Typescript](http://www.typescriptlang.org/), designed to run inside an [alpine](https://hub.docker.com/_/alpine) container.
 
 ## Getting started
 
-There's no transpile or build steps, just running!
+Build and run Typescript app inside an alpine 3.8  docker image:
+
+```
+cd ./src
+
+docker build -t helloworld/typescript .
+
+docker run -it helloworld/typescript:latest
+```
+
 
 ### Inside your host os
 
 This assumes your host has a valid [Node](https://nodejs.org) installation.
 
+Install typescript
 ```
-npm start
+npm install -g typescript
+```
+
+```
+cd ./src
+tsc
+cp package.json ./build
+cd ./build && npm start
 ```
 
 ### Inside a container
