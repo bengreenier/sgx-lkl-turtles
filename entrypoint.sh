@@ -82,11 +82,10 @@ echo "Entrypoint: Docker entrypoint: $DOCKER_IMG_ENTRY"
 
 # Inflate the docker environment into our environment
 # Note: however, we don't allow the docker environment to override some things
-# Namely: PATH, SGXLKL_CWD, SGXLKL_KEY
+# Namely: SGXLKL_CWD, SGXLKL_KEY
 #
 # shellcheck disable=SC2086,SC2163
 export $DOCKER_IMG_ENV
-export PATH=$OUR_PATH
 export SGXLKL_CWD=$DOCKER_IMG_WORKDIR
 export SGXLKL_KEY=$SIGN_KEY_PATH
 
