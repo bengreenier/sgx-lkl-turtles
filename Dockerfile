@@ -61,5 +61,4 @@ ENTRYPOINT ./entrypoint.sh \
   ./app.key \
   /tools/bin/libsgxlkl.so \
   ./src/Dockerfile \
-  ./app.img \
-  /app/index.js
+  ./app.img
