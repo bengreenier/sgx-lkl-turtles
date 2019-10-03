@@ -4,4 +4,16 @@ WORKDIR /app
 RUN apk --update upgrade && \
     apk add nodejs npm
 COPY ./ ./
-ENTRYPOINT [ "/usr/bin/npm", "start" ]
+
+# Used by the app to customize our greeting
+ENV APP_WORLD_TAG="human"
+
+# Enable SGXLKL verbosity
+ENV SGXLKL_VERBOSE=1
+# Scale up the SGXLKL heap size
+ENV SGXLKL_HEAP=640M
+# Size our SGXLKL disk
+# Note: This is the only __mandatory__ option
+ENV SGXLKL_DISK_SIZE=100M
+
+ENTRYPOINT ["/usr/bin/node", "--max-old-space-size=512", "index.js"]
