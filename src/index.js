@@ -1,1 +1,1 @@
-console.log("Hello world. I'm inside an enclave!")
+console.log(`Hello ${process.env.APP_WORLD_TAG || "world"}. I'm inside an enclave!`)

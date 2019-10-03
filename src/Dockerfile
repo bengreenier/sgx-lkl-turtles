@@ -5,6 +5,9 @@ RUN apk --update upgrade && \
     apk add nodejs npm
 COPY ./ ./
 
+# Used by the app to customize our greeting
+ENV APP_WORLD_TAG="human"
+
 # Enable SGXLKL verbosity
 ENV SGXLKL_VERBOSE=1
 # Scale up the SGXLKL heap size
