@@ -9,9 +9,9 @@ Build and run Typescript app inside an alpine 3.8 docker image:
 ```
 cd ./src
 
-docker build -t helloworld/typescript .
+docker build -t echoserver/typescript .
 
-docker run -it -p 8080:8080 helloworld/typescript:latest
+docker run -it -p 8080:8080 echoserver/typescript:latest
 ```
 
 
